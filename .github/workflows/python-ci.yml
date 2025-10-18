@@ -37,5 +37,5 @@ jobs:
         run: |
           echo "🚀 Starting deployment..."
           mkdir build_output
-          cp -r * build_output/
+          cp -r * build_output1/
           echo "✅ Deployment complete!"
