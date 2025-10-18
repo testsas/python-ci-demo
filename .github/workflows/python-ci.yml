@@ -1,39 +1,41 @@
-name: Python CI Demo
+name: Python CI/CD Demo
 
-# 1️⃣ متى يعمل الـ Workflow
 on:
   push:
-    branches: [ "main" ]     # يعمل عند أي push إلى الفرع main
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]     # وأيضًا عند أي Pull Request
+    branches: [ "main" ]
 
-# 2️⃣ تعريف الوظائف (jobs)
 jobs:
-  build-test:
-    runs-on: ubuntu-latest    # نوع النظام الذي سيعمل عليه
+  build-test-deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      # الخطوة الأولى: سحب الكود من المستودع
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      # الخطوة الثانية: تثبيت Python
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      # الخطوة الثالثة: تثبيت المكتبات
       - name: 📦 Install dependencies
         run: |
           pip install -r requirements.txt
 
-      # الخطوة الرابعة: تنفيذ الاختبارات
       - name: 🧪 Run tests
         run: |
           pytest || exit 1
 
-      # الخطوة الخامسة: الرد أو الرسالة بعد النجاح
       - name: 💬 Reply message
+        if: success()
+        run: echo "✅ All tests passed successfully!"
+
+      # 🧱 الخطوة الجديدة: النشر
+      - name: 🚀 Deploy application
+        if: success()    # تعمل فقط إذا نجح الاختبار
         run: |
-          echo "✅ All tests passed successfully!"
+          echo "🚀 Starting deployment..."
+          mkdir build_output
+          cp -r * build_output/
+          echo "✅ Deployment complete!"
