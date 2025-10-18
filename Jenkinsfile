@@ -1,14 +1,6 @@
 pipeline {
     agent any
-
     stages {
-        stage('Checkout') {
-            steps {
-                echo '📥 Getting code from GitHub...'
-                checkout scm
-            }
-        }
-
         stage('Setup Python') {
             steps {
                 echo '🐍 Checking Python version...'
@@ -25,9 +17,19 @@ pipeline {
             }
         }
 
-        stage('Deploy / Build') {
+        stage('Deploy') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
             steps {
-                echo '🚀 Build successful! (simulated deploy)'
+                echo '🚀 Deploying application...'
+                // مثال: نسخ التطبيق لمجلد الإنتاج وتشغيله
+                bat '''
+                mkdir C:\\deploy-folder
+                copy app.py C:\\deploy-folder\\app.py /Y
+                cd C:\\deploy-folder
+                python app.py
+                '''
             }
         }
     }
@@ -41,3 +43,4 @@ pipeline {
         }
     }
 }
+
